@@ -63,96 +63,57 @@
 
   function updateStyleSheet() {
     const id = 'prn-css';
-    const prev = document.getElementById(id);
-    if (!shouldHideCSS()) {
-      prev?.remove();
-      return;
-    }
-    if (prev) return;
+    let prev = document.getElementById(id);
+    let cssText = "";
 
-    const selectors = [
-      'ytd-reel-shelf-renderer',
-      'ytd-shorts',
-      'ytd-shorts-shelf-renderer',
-      'ytd-reel-item-renderer',
-      'ytm-shorts-lockup-view-model-v2',
-      'ytd-rich-section-renderer',
-      '[is-shorts]',
-      '[is-reel-item-style-avatar-circle]',
-      'a[href*="/shorts/"]',
-      'a[title="Shorts"]',
-      '.yt-simple-endpoint[title="Shorts"]'
-    ];
     if (config.sidebar) {
-      selectors.push('.ytd-guide-entry-renderer:has(.yt-simple-endpoint[title="Shorts"])');
+      cssText += `.yt-simple-endpoint[title="Shorts"] { display: none !important; }\n`;
+    } else {
+      cssText += `.yt-simple-endpoint[title="Shorts"] { display: revert !important; }\n`;
     }
 
-    const st = document.createElement('style');
-    st.id = id;
-    st.textContent = selectors.join(',\n') + '{display:none!important;}';
-    document.head.appendChild(st);
+    if (shouldHideCSS()) {
+      const baseSelectors = [
+        'ytd-reel-shelf-renderer',
+        'ytd-shorts',
+        'ytd-shorts-shelf-renderer',
+        'ytd-reel-item-renderer',
+        'ytm-shorts-lockup-view-model-v2',
+        !PATTERN.subs.test(location.href) ? 'ytd-rich-section-renderer' : null,
+        '[is-shorts]',
+        '[is-reel-item-style-avatar-circle]'
+      ].filter(Boolean);
+      cssText += `${baseSelectors.join(',\n')} { display: none !important; }\n`;
+    }
+
+    if (prev) {
+      prev.textContent = cssText;
+    } else {
+      prev = document.createElement('style');
+      prev.id = id;
+      prev.textContent = cssText;
+      document.head.appendChild(prev);
+    }
   }
 
-  function cleanShortsElements() {
-    if (config.sidebar) {
-      document.querySelectorAll('.yt-simple-endpoint[title="Shorts"]')
-        .forEach(el => el.closest('ytd-guide-entry-renderer')?.remove());
-    }
-
-    if (!shouldHideCSS()) return;
-
-    document.querySelectorAll(`
-      ytd-reel-shelf-renderer,
-      ytd-shorts,
-      ytd-shorts-shelf-renderer,
-      ytd-reel-item-renderer,
-      ytm-shorts-lockup-view-model-v2,
-      ytd-video-renderer:has(a[href*="/shorts/"]),
-      ytd-rich-item-renderer:has(a[href*="/shorts/"])
-    `).forEach(el => el.remove());
-  }
-
-  function observeSidebarGuide() {
-    const rootObs = new MutationObserver(() => {
-      const sidebar = document.querySelector('ytd-guide-section-renderer');
-      if (!sidebar) return;
-
-      cleanShortsElements();
-
-      new MutationObserver(cleanShortsElements)
-        .observe(sidebar, { childList: true, subtree: true });
-
-      rootObs.disconnect();
+  function replaceShortsLinks(root = document) {
+    if (!config.redirect) return;
+    root.querySelectorAll('a[href*="/shorts/"]').forEach(a => {
+      if (a.dataset.prnShortsPatched) return;
+      const m = a.href.match(/\/shorts\/([^/?&#]+)/);
+      if (m) {
+        a.href = '/watch?v=' + m[1];
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          location.assign('/watch?v=' + m[1]);
+        });
+        a.dataset.prnShortsPatched = '1';
+      }
     });
-
-    rootObs.observe(document.documentElement, { childList: true, subtree: true });
-    if (document.querySelector('ytd-guide-section-renderer')) cleanShortsElements();
-  }
-  
-  let container = null;
-
-  function removeExtraContinuationItems() {
-    if (!PATTERN.watch.test(location.href)) return;
-    if (!container) return;
-    const items = Array.from(container.querySelectorAll('ytd-continuation-item-renderer'));
-
-    for (let i = 0; i < items.length - 1; i++) {
-      items[i].remove();
-    }
   }
 
-  function observeContinuations() {
-    container = document.querySelector('#related')
-    if (!container) return;
-    
-    const observer = new MutationObserver(removeExtraContinuationItems);
-    observer.observe(container, { childList: true, subtree: true });
-    removeExtraContinuationItems();
-  }
-  
   function lockShortsScroll() {
     if (document.getElementById('prn-scroll-lock')) return;
-
     const st = document.createElement('style');
     st.id = 'prn-scroll-lock';
     st.textContent = `html, body { overflow: hidden !important; height: 100% !important; }`;
@@ -162,13 +123,11 @@
     ['wheel', 'touchmove', 'keydown'].forEach(evt =>
       window.addEventListener(evt, block, { passive: false })
     );
-
     window.__prnBlock = block;
   }
 
   function unlockShortsScroll() {
     document.getElementById('prn-scroll-lock')?.remove();
-
     const block = window.__prnBlock;
     if (block) {
       ['wheel', 'touchmove', 'keydown'].forEach(evt =>
@@ -187,13 +146,11 @@
       if (m) {
         unlockShortsScroll();
         location.replace(`https://www.youtube.com/watch?v=${m[1]}`);
-        observeSidebarGuide();
         return;
       }
     }
 
     if (isShorts && !config.redirect) {
-      observeSidebarGuide();
       if (config.scrollLock) lockShortsScroll();
       else unlockShortsScroll();
       return;
@@ -202,9 +159,7 @@
     }
 
     updateStyleSheet();
-    observeSidebarGuide();
-    cleanShortsElements();
-    observeContinuations();
+    replaceShortsLinks();
   }
 
   if (document.readyState === 'loading') {
@@ -237,15 +192,15 @@
       padding: '0 12px',
       gap: '8px'
     });
-    btn.setAttribute('aria-label','Shorts Setting');
+    btn.setAttribute('aria-label', 'Shorts Setting');
 
     const iconWrap = document.createElement('span');
     iconWrap.className = 'yt-spec-icon-shape';
-    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.setAttribute('width','20'); svg.setAttribute('height','20');
-    svg.setAttribute('viewBox','0 0 24 24'); svg.setAttribute('fill','currentColor');
-    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
-    p.setAttribute('d','M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z');
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', '20'); svg.setAttribute('height', '20');
+    svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('fill', 'currentColor');
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', 'M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z');
     svg.appendChild(p); iconWrap.appendChild(svg);
 
     const txt = document.createElement('span');
@@ -256,39 +211,42 @@
     btn.appendChild(iconWrap); btn.appendChild(txt);
 
     const dd = document.createElement('div');
-    dd.id='prn-dropdown';
-    Object.assign(dd.style,{
-      position:'absolute',top:'calc(100% + 6px)',right:'0',
-      minWidth:'240px',background:'rgba(30,30,30,0.96)',
-      color:'#fff',borderRadius:'10px',padding:'14px',
-      fontSize:'13px',fontFamily:'sans-serif',
-      boxShadow:'0 4px 16px rgba(0,0,0,.4)',zIndex:'100000',
-      display:'none'
+    dd.id = 'prn-dropdown';
+    Object.assign(dd.style, {
+      position: 'absolute', top: 'calc(100% + 6px)', right: '0',
+      minWidth: '240px', background: 'rgba(30,30,30,0.96)',
+      color: '#fff', borderRadius: '10px', padding: '14px',
+      fontSize: '13px', fontFamily: 'sans-serif',
+      boxShadow: '0 4px 16px rgba(0,0,0,.4)', zIndex: '100000',
+      display: 'none'
     });
 
     const title = document.createElement('div');
-    title.textContent=UI_LABEL['title'];
-    title.style.fontWeight='600'; title.style.marginBottom='8px';
+    title.textContent = UI_LABEL['title'];
+    title.style.fontWeight = '600'; title.style.marginBottom = '8px';
     dd.appendChild(title);
 
     for (const key in INIT_CONFIG) {
       const lbl = document.createElement('label');
-      Object.assign(lbl.style,{display:'block',margin:'4px 0'});
+      Object.assign(lbl.style, { display: 'block', margin: '4px 0' });
       const inp = document.createElement('input');
-      inp.type='checkbox'; inp.checked=config[key]; inp.dataset.k=key;
-      inp.style.marginRight='6px';
-      inp.addEventListener('change',e=>{
-        const k=e.target.dataset.k; const val=e.target.checked;
-        config[k]=val; GM_setValue(PREFIX+k,val);
+      inp.type = 'checkbox'; inp.checked = config[key]; inp.dataset.k = key;
+      inp.style.marginRight = '6px';
+      inp.addEventListener('change', e => {
+        const k = e.target.dataset.k; const val = e.target.checked;
+        config[k] = val; GM_setValue(PREFIX + k, val);
+        updateStyleSheet();
+        handlePage();
+        if (k === "redirect") handlePage();
       });
       lbl.appendChild(inp);
       lbl.appendChild(document.createTextNode(UI_LABEL[key] || key));
       dd.appendChild(lbl);
     }
 
-    btn.addEventListener('click',e=>{
+    btn.addEventListener('click', e => {
       e.stopPropagation();
-      dd.style.display = dd.style.display==='none'?'block':'none';
+      dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
     });
     document.addEventListener('click', (e) => {
       if (!dd.contains(e.target) && !btn.contains(e.target)) {
@@ -300,8 +258,49 @@
     end.prepend(wrap);
   }
 
-  const iv = setInterval(()=>{
-    if(document.querySelector('#end')){ insertSettingsPanel(); clearInterval(iv);}
-  },300);
-  window.addEventListener('yt-navigate-finish',()=>setTimeout(insertSettingsPanel,500));
+  let endObserver;
+  function observeEnd() {
+    const end = document.querySelector('#end');
+    if (!end) return;
+    insertSettingsPanel();
+
+    if (endObserver) endObserver.disconnect();
+    endObserver = new MutationObserver(() => {
+      insertSettingsPanel();
+    });
+    endObserver.observe(end, { childList: true, subtree: false });
+  }
+
+  const iv = setInterval(() => {
+    if (document.querySelector('#end')) {
+      observeEnd();
+      clearInterval(iv);
+    }
+  }, 300);
+
+  const shortsObserver = new MutationObserver(mutations => {
+    if (!config.redirect) return;
+    mutations.forEach(m => {
+      m.addedNodes.forEach(node => {
+        if (node.nodeType === 1) replaceShortsLinks(node);
+      });
+    });
+  });
+
+  function waitBodyAndObserve() {
+    if (document.body) {
+      shortsObserver.observe(document.body, { childList: true, subtree: true });
+    } else {
+      const iv = setInterval(() => {
+        if (document.body) {
+          shortsObserver.observe(document.body, { childList: true, subtree: true });
+          clearInterval(iv);
+        }
+      }, 10);
+    }
+  }
+
+  waitBodyAndObserve();
+
+  window.addEventListener('yt-navigate-finish', () => setTimeout(observeEnd, 500));
 })();
