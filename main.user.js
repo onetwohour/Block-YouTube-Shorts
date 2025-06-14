@@ -9,6 +9,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @run-at       document-start
+// @require      https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/lang.js
 // ==/UserScript==
 
 (() => {
@@ -27,17 +28,13 @@
     sidebar: true
   };
 
-  const UI_LABEL = {
-    home: '홈 화면 Shorts 숨김',
-    subs: '구독 피드 Shorts 숨김',
-    feeds: '기타 피드 Shorts 숨김',
-    recommend: '영상 화면 우측 추천 Shorts 숨김',
-    channel: '채널 페이지 Shorts 숨김',
-    search: '검색 결과 Shorts 숨김',
-    redirect: 'Shorts를 일반 동영상 화면으로 리디렉션',
-    scrollLock: 'Shorts 페이지 스크롤 잠금',
-    sidebar: '사이드바 Shorts 메뉴 숨김'
-  };
+  function detectLang() {
+    const saved = GM_getValue('userLang');
+    if (saved && window.LANGS[saved]) return saved;
+    const nav = (navigator.language || 'en').slice(0,2).toLowerCase();
+    return window.LANGS[nav] ? nav : 'en';
+  }
+  const UI_LABEL = window.LANGS[detectLang()];
 
   const config = {};
   for (const key in INIT_CONFIG) config[key] = GM_getValue(PREFIX + key, INIT_CONFIG[key]);
