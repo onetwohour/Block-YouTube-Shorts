@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         Block Youtube Shorts
 // @namespace    https://github.com/onetwohour/Block-YouTube-Shorts
+// @updateURL    https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
+// @downloadURL  https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
 // @version      1.0.0
 // @description  Protect from brain breaker
-// @match        https://www.youtube.com/*
+// @match        *://*.youtube.com/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @run-at       document-start
