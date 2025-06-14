@@ -128,32 +128,28 @@
     rootObs.observe(document.documentElement, { childList: true, subtree: true });
     if (document.querySelector('ytd-guide-section-renderer')) cleanShortsElements();
   }
+  
+  let container = null;
 
   function removeExtraContinuationItems() {
-    const process = selector => {
-      const container = document.querySelector(selector);
-      if (!container) return;
-      const items = Array.from(container.querySelectorAll('ytd-continuation-item-renderer'));
-      for (let i = 0; i < items.length - 1; i++) {
-        items[i].remove();
-      }
-    };
-    process('ytd-item-section-renderer#sections');
-    process('#related');
+    if (!PATTERN.watch.test(location.href)) return;
+    if (!container) return;
+    const items = Array.from(container.querySelectorAll('ytd-continuation-item-renderer'));
 
-    document.querySelectorAll('ytd-section-list-renderer, ytd-browse').forEach(feed => {
-      const items = Array.from(feed.querySelectorAll('ytd-continuation-item-renderer'));
-      for (let i = 0; i < items.length - 1; i++) {
-        items[i].remove();
-      }
-    });
+    for (let i = 0; i < items.length - 1; i++) {
+      items[i].remove();
+    }
   }
 
   function observeContinuations() {
+    container = document.querySelector('#related')
+    if (!container) return;
+    
     const observer = new MutationObserver(removeExtraContinuationItems);
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(container, { childList: true, subtree: true });
+    removeExtraContinuationItems();
   }
-
+  
   function lockShortsScroll() {
     if (document.getElementById('prn-scroll-lock')) return;
 
@@ -241,7 +237,7 @@
       padding: '0 12px',
       gap: '8px'
     });
-    btn.setAttribute('aria-label','Shorts 설정');
+    btn.setAttribute('aria-label','Shorts Setting');
 
     const iconWrap = document.createElement('span');
     iconWrap.className = 'yt-spec-icon-shape';
@@ -271,7 +267,7 @@
     });
 
     const title = document.createElement('div');
-    title.textContent='🧹 Shorts 차단 설정';
+    title.textContent=UI_LABEL['title'];
     title.style.fontWeight='600'; title.style.marginBottom='8px';
     dd.appendChild(title);
 

@@ -2,6 +2,7 @@
 
 window.LANGS = {
   ko: {
+    title:     '🧹 Shorts 차단',
     home:      '홈 화면 Shorts 숨김',
     subs:      '구독 피드 Shorts 숨김',
     feeds:     '기타 피드 Shorts 숨김',
@@ -13,6 +14,7 @@ window.LANGS = {
     sidebar:   '사이드바 Shorts 메뉴 숨김'
   },
   en: {
+    title:     '🧹 Shorts Block',
     home:      'Hide Shorts on Home',
     subs:      'Hide Shorts in Subscriptions',
     feeds:     'Hide Shorts in Other Feeds',
@@ -24,6 +26,7 @@ window.LANGS = {
     sidebar:   'Hide Shorts in Sidebar'
   },
   ja: {
+    title:     '🧹 Shorts 非表示',
     home:      'ホーム画面のShortsを非表示',
     subs:      '登録フィードのShortsを非表示',
     feeds:     'その他のフィードのShortsを非表示',
@@ -35,6 +38,7 @@ window.LANGS = {
     sidebar:   'サイドバーのShortsメニューを非表示'
   },
   zh: {
+    title:     '🧹 Shorts 屏蔽',
     home:      '隐藏首页 Shorts',
     subs:      '在订阅中隐藏 Shorts',
     feeds:     '在其他订阅源隐藏 Shorts',
@@ -46,6 +50,7 @@ window.LANGS = {
     sidebar:   '隐藏侧边栏 Shorts 菜单'
   },
   es: {
+    title:     '🧹 Bloquear Shorts',
     home:      'Ocultar Shorts en Inicio',
     subs:      'Ocultar Shorts en Suscripciones',
     feeds:     'Ocultar Shorts en Otros Feeds',
@@ -57,6 +62,7 @@ window.LANGS = {
     sidebar:   'Ocultar Shorts en la Barra Lateral'
   },
   fr: {
+    title:     '🧹 Blocage Shorts',
     home:      'Masquer les Shorts sur la page d’accueil',
     subs:      'Masquer les Shorts dans Abonnements',
     feeds:     'Masquer les Shorts dans les autres flux',
@@ -68,6 +74,7 @@ window.LANGS = {
     sidebar:   'Masquer le menu Shorts dans la barre latérale'
   },
   de: {
+    title:     '🧹 Shorts Blocken',
     home:      'Shorts auf der Startseite ausblenden',
     subs:      'Shorts im Abofeed ausblenden',
     feeds:     'Shorts in anderen Feeds ausblenden',
@@ -79,6 +86,7 @@ window.LANGS = {
     sidebar:   'Shorts-Menü in der Seitenleiste ausblenden'
   },
   pt: {
+    title:     '🧹 Bloquear Shorts',
     home:      'Ocultar Shorts na Página Inicial',
     subs:      'Ocultar Shorts em Inscrições',
     feeds:     'Ocultar Shorts em Outros Feeds',
@@ -90,6 +98,7 @@ window.LANGS = {
     sidebar:   'Ocultar Shorts na Barra Lateral'
   },
   ru: {
+    title:     '🧹 Блокировка Shorts',
     home:      'Скрыть Shorts на главной странице',
     subs:      'Скрыть Shorts в подписках',
     feeds:     'Скрыть Shorts в других лентах',
@@ -101,6 +110,7 @@ window.LANGS = {
     sidebar:   'Скрыть Shorts в боковой панели'
   },
   ar: {
+    title:     '🧹 حظر Shorts',
     home:      'إخفاء Shorts في الصفحة الرئيسية',
     subs:      'إخفاء Shorts في الاشتراكات',
     feeds:     'إخفاء Shorts في الخلاصات الأخرى',
