@@ -77,11 +77,10 @@
         'ytd-reel-shelf-renderer',
         'ytd-shorts',
         'ytd-shorts-shelf-renderer',
-        'ytd-reel-item-renderer',
         'ytm-shorts-lockup-view-model-v2',
-        !PATTERN.subs.test(location.href) ? 'ytd-rich-section-renderer' : null,
+        !PATTERN.subs.test(location.href) ? 'ytd-rich-section-renderer.style-scope.ytd-rich-grid-renderer:has(ytd-rich-shelf-renderer[is-shorts])' : null,
         '[is-shorts]',
-        '[is-reel-item-style-avatar-circle]'
+        //'[is-reel-item-style-avatar-circle]'
       ].filter(Boolean);
       cssText += `${baseSelectors.join(',\n')} { display: none !important; }\n`;
     }
