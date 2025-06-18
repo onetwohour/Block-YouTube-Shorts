@@ -39,15 +39,15 @@
   const config = {};
   for (const key in INIT_CONFIG) config[key] = GM_getValue(PREFIX + key, INIT_CONFIG[key]);
 
-  const PATTERN = {
-    home: /^https?:\/\/(?:www\.)?youtube\.com\/?$/,
-    subs: /^https?:\/\/(?:www\.)?youtube\.com\/feed\/subscriptions\/?$/,
-    feeds: /^https?:\/\/(?:www\.)?youtube\.com\/(?:feed|gaming)(?!\/subscriptions).*$/,
-    watch: /^https?:\/\/(?:www\.)?youtube\.com\/watch.*$/,
-    shorts: /^https?:\/\/(?:www\.)?youtube\.com\/shorts.*$/,
-    channel: /^https?:\/\/(?:www\.)?youtube\.com\/(?!feed|watch|shorts|playlist|podcasts|gaming|results).+$/,
-    search: /^https?:\/\/(?:www\.)?youtube\.com\/results.*$/
-  };
+const PATTERN = {
+  home: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/?$/,
+  subs: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/feed\/subscriptions\/?$/,
+  feeds: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/(?:feed|gaming)(?!\/subscriptions).*$/,
+  watch: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/watch.*$/,
+  shorts: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/shorts.*$/,
+  channel: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/(?!feed|watch|shorts|playlist|podcasts|gaming|results).+$/,
+  search: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/results.*$/
+};
 
   function shouldHideCSS() {
     const u = location.href;
@@ -68,19 +68,24 @@
 
     if (config.sidebar) {
       cssText += `.yt-simple-endpoint[title="Shorts"] { display: none !important; }\n`;
+      cssText += `ytm-pivot-bar-item-renderer:has(> .pivot-bar-item-tab.pivot-shorts) { display: none !important; }\n`;
     } else {
       cssText += `.yt-simple-endpoint[title="Shorts"] { display: revert !important; }\n`;
+      cssText += `ytm-pivot-bar-item-renderer:has(> .pivot-bar-item-tab.pivot-shorts) { display: revert !important; }\n`;
     }
-
+    
     if (shouldHideCSS()) {
       const baseSelectors = [
+        // PC
         'ytd-reel-shelf-renderer',
         'ytd-shorts',
         'ytd-shorts-shelf-renderer',
         'ytm-shorts-lockup-view-model-v2',
         !PATTERN.subs.test(location.href) ? 'ytd-rich-section-renderer.style-scope.ytd-rich-grid-renderer:has(ytd-rich-shelf-renderer[is-shorts])' : null,
         '[is-shorts]',
-        //'[is-reel-item-style-avatar-circle]'
+        // Mobile
+        'ytm-rich-section-renderer:has(ytm-shorts-lockup-view-model)',
+        'ytm-item-section-renderer:has(ytm-shorts-lockup-view-model)'
       ].filter(Boolean);
       cssText += `${baseSelectors.join(',\n')} { display: none !important; }\n`;
     }
@@ -168,7 +173,7 @@
   window.addEventListener('yt-page-data-fetched', handlePage);
 
   function insertSettingsPanel() {
-    const end = document.querySelector('#end');
+    const end = document.querySelector('#end') ?? document.querySelector('#header-bar > header > div');
     if (!end || document.querySelector('#prn-btn-wrapper')) return;
 
     const wrap = document.createElement('div');
@@ -259,7 +264,7 @@
 
   let endObserver;
   function observeEnd() {
-    const end = document.querySelector('#end');
+    const end = document.querySelector('#end') ?? document.querySelector('#header-bar > header > div');
     if (!end) return;
     insertSettingsPanel();
 
@@ -271,7 +276,7 @@
   }
 
   const iv = setInterval(() => {
-    if (document.querySelector('#end')) {
+    if (document.querySelector('#end') || document.querySelector('#header-bar > header > div')) {
       observeEnd();
       clearInterval(iv);
     }
