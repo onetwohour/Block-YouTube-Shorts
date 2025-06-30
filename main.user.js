@@ -3,7 +3,7 @@
 // @namespace    https://github.com/onetwohour/Block-YouTube-Shorts
 // @updateURL    https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
 // @downloadURL  https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
-// @version      1.0.0
+// @version      1.0.1
 // @description  Protect from brain breaker
 // @match        *://*.youtube.com/*
 // @grant        GM_getValue
@@ -31,7 +31,7 @@
   function detectLang() {
     const saved = GM_getValue('userLang');
     if (saved && window.LANGS[saved]) return saved;
-    const nav = (navigator.language || 'en').slice(0,2).toLowerCase();
+    const nav = (navigator.language || 'en').slice(0, 2).toLowerCase();
     return window.LANGS[nav] ? nav : 'en';
   }
   const UI_LABEL = window.LANGS[detectLang()];
@@ -39,15 +39,15 @@
   const config = {};
   for (const key in INIT_CONFIG) config[key] = GM_getValue(PREFIX + key, INIT_CONFIG[key]);
 
-const PATTERN = {
-  home: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/?$/,
-  subs: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/feed\/subscriptions\/?$/,
-  feeds: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/(?:feed|gaming)(?!\/subscriptions).*$/,
-  watch: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/watch.*$/,
-  shorts: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/shorts.*$/,
-  channel: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/(?!feed|watch|shorts|playlist|podcasts|gaming|results).+$/,
-  search: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/results.*$/
-};
+  const PATTERN = {
+    home: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/?$/,
+    subs: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/feed\/subscriptions\/?$/,
+    feeds: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/(?:feed|gaming)(?!\/subscriptions).*$/,
+    watch: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/watch.*$/,
+    shorts: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/shorts.*$/,
+    channel: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/(?!feed|watch|shorts|playlist|podcasts|gaming|results).+$/,
+    search: /^https?:\/\/(?:www\.|m\.)?youtube\.com\/results.*$/
+  };
 
   function shouldHideCSS() {
     const u = location.href;
@@ -73,7 +73,7 @@ const PATTERN = {
       cssText += `.yt-simple-endpoint[title="Shorts"] { display: revert !important; }\n`;
       cssText += `ytm-pivot-bar-item-renderer:has(> .pivot-bar-item-tab.pivot-shorts) { display: revert !important; }\n`;
     }
-    
+
     if (shouldHideCSS()) {
       const baseSelectors = [
         // PC
@@ -125,7 +125,9 @@ const PATTERN = {
 
     const block = e => e.stopPropagation() || e.preventDefault();
     ['wheel', 'touchmove', 'keydown'].forEach(evt =>
-      window.addEventListener(evt, block, { passive: false })
+      window.addEventListener(evt, block, {
+        passive: false
+      })
     );
     window.__prnBlock = block;
   }
@@ -135,7 +137,9 @@ const PATTERN = {
     const block = window.__prnBlock;
     if (block) {
       ['wheel', 'touchmove', 'keydown'].forEach(evt =>
-        window.removeEventListener(evt, block, { passive: false })
+        window.removeEventListener(evt, block, {
+          passive: false
+        })
       );
       delete window.__prnBlock;
     }
@@ -201,44 +205,63 @@ const PATTERN = {
     const iconWrap = document.createElement('span');
     iconWrap.className = 'yt-spec-icon-shape';
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '20'); svg.setAttribute('height', '20');
-    svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('fill', 'currentColor');
+    svg.setAttribute('width', '20');
+    svg.setAttribute('height', '20');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'currentColor');
     const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     p.setAttribute('d', 'M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z');
-    svg.appendChild(p); iconWrap.appendChild(svg);
+    svg.appendChild(p);
+    iconWrap.appendChild(svg);
 
     const txt = document.createElement('span');
     txt.textContent = 'Shorts';
     txt.className = 'yt-core-attributed-string yt-core-attributed-string--white-space-no-wrap';
     txt.style.fontSize = '13px';
 
-    btn.appendChild(iconWrap); btn.appendChild(txt);
+    btn.appendChild(iconWrap);
+    btn.appendChild(txt);
 
     const dd = document.createElement('div');
     dd.id = 'prn-dropdown';
     Object.assign(dd.style, {
-      position: 'absolute', top: 'calc(100% + 6px)', right: '0',
-      minWidth: '240px', background: 'rgba(30,30,30,0.96)',
-      color: '#fff', borderRadius: '10px', padding: '14px',
-      fontSize: '13px', fontFamily: 'sans-serif',
-      boxShadow: '0 4px 16px rgba(0,0,0,.4)', zIndex: '100000',
+      position: 'absolute',
+      top: 'calc(100% + 6px)',
+      right: '0',
+      minWidth: '240px',
+      background: 'rgba(30,30,30,0.96)',
+      color: '#fff',
+      borderRadius: '10px',
+      padding: '14px',
+      fontSize: '13px',
+      fontFamily: 'sans-serif',
+      boxShadow: '0 4px 16px rgba(0,0,0,.4)',
+      zIndex: '100000',
       display: 'none'
     });
 
     const title = document.createElement('div');
     title.textContent = UI_LABEL['title'];
-    title.style.fontWeight = '600'; title.style.marginBottom = '8px';
+    title.style.fontWeight = '600';
+    title.style.marginBottom = '8px';
     dd.appendChild(title);
 
     for (const key in INIT_CONFIG) {
       const lbl = document.createElement('label');
-      Object.assign(lbl.style, { display: 'block', margin: '4px 0' });
+      Object.assign(lbl.style, {
+        display: 'block',
+        margin: '4px 0'
+      });
       const inp = document.createElement('input');
-      inp.type = 'checkbox'; inp.checked = config[key]; inp.dataset.k = key;
+      inp.type = 'checkbox';
+      inp.checked = config[key];
+      inp.dataset.k = key;
       inp.style.marginRight = '6px';
       inp.addEventListener('change', e => {
-        const k = e.target.dataset.k; const val = e.target.checked;
-        config[k] = val; GM_setValue(PREFIX + k, val);
+        const k = e.target.dataset.k;
+        const val = e.target.checked;
+        config[k] = val;
+        GM_setValue(PREFIX + k, val);
         updateStyleSheet();
         handlePage();
         if (k === "redirect") handlePage();
@@ -258,11 +281,13 @@ const PATTERN = {
       }
     });
 
-    wrap.appendChild(btn); wrap.appendChild(dd);
+    wrap.appendChild(btn);
+    wrap.appendChild(dd);
     end.prepend(wrap);
   }
 
   let endObserver;
+
   function observeEnd() {
     const end = document.querySelector('#end') ?? document.querySelector('#header-bar > header > div');
     if (!end) return;
@@ -272,7 +297,10 @@ const PATTERN = {
     endObserver = new MutationObserver(() => {
       insertSettingsPanel();
     });
-    endObserver.observe(end, { childList: true, subtree: false });
+    endObserver.observe(end, {
+      childList: true,
+      subtree: false
+    });
   }
 
   const iv = setInterval(() => {
@@ -280,7 +308,7 @@ const PATTERN = {
       observeEnd();
       clearInterval(iv);
     }
-  }, 300);
+  }, 1500);
 
   const shortsObserver = new MutationObserver(mutations => {
     if (!config.redirect) return;
@@ -293,18 +321,24 @@ const PATTERN = {
 
   function waitBodyAndObserve() {
     if (document.body) {
-      shortsObserver.observe(document.body, { childList: true, subtree: true });
+      shortsObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
     } else {
       const iv = setInterval(() => {
         if (document.body) {
-          shortsObserver.observe(document.body, { childList: true, subtree: true });
+          shortsObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
           clearInterval(iv);
         }
-      }, 10);
+      }, 1000);
     }
   }
 
   waitBodyAndObserve();
 
-  window.addEventListener('yt-navigate-finish', () => setTimeout(observeEnd, 500));
+  window.addEventListener('yt-navigate-finish', () => setTimeout(observeEnd, 1000));
 })();
