@@ -1,4 +1,10 @@
-# Block Youtube Shorts
+# Block YouTube Shorts
+
+<p align="right">
+🌐 언어: 
+<strong>한국어</strong> |
+<a href="README.en.md">English</a>
+</p>
 
 **YouTube Shorts** 콘텐츠를 사이트 전역에서 자동으로 숨기거나 리디렉션해주는 Tampermonkey 사용자 스크립트입니다.
 짧고 중독성 강한 Shorts 노출을 막아 집중력 저하를 예방하세요.
