@@ -3,7 +3,7 @@
 // @namespace    https://github.com/onetwohour/Block-YouTube-Shorts
 // @updateURL    https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
 // @downloadURL  https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
-// @version      1.0.1
+// @version      1.0.2
 // @description  Protect from brain breaker
 // @match        *://*.youtube.com/*
 // @grant        GM_getValue
@@ -71,7 +71,7 @@
       cssText += `ytm-pivot-bar-item-renderer:has(> .pivot-bar-item-tab.pivot-shorts) { display: none !important; }\n`;
     } else {
       cssText += `.yt-simple-endpoint[title="Shorts"] { display: revert !important; }\n`;
-      cssText += `ytm-pivot-bar-item-renderer:has(> .pivot-bar-item-tab.pivot-shorts) { display: revert !important; }\n`;
+      cssText += `ytm-pivot-bar-item-renderer:has(> .pivot-bar-item-tab.pivot-shorts) { display: flex !important; }\n`;
     }
 
     if (shouldHideCSS()) {
@@ -177,6 +177,7 @@
   window.addEventListener('yt-page-data-fetched', handlePage);
 
   function insertSettingsPanel() {
+    if (location.href.startsWith('https://m.youtube.com/select_site')) return;
     const end = document.querySelector('#end') ?? document.querySelector('#header-bar > header > div');
     if (!end || document.querySelector('#prn-btn-wrapper')) return;
 
@@ -229,6 +230,7 @@
       top: 'calc(100% + 6px)',
       right: '0',
       minWidth: '240px',
+      overflowWrap: 'break-word',
       background: 'rgba(30,30,30,0.96)',
       color: '#fff',
       borderRadius: '10px',
@@ -273,8 +275,39 @@
 
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+
+      if (dd.style.display === 'block') {
+        dd.style.display = 'none';
+        return;
+      }
+
+      dd.style.display = 'block';
+      dd.style.visibility = 'hidden';
+      dd.style.left = 'auto';
+      dd.style.right = '0';
+
+      requestAnimationFrame(() => {
+        const rect = btn.getBoundingClientRect();
+        const ddRect = dd.getBoundingClientRect();
+        const dropdownWidth = ddRect.width;
+        const padding = 16;
+
+        if (rect.left + dropdownWidth > window.innerWidth - padding) {
+          dd.style.left = 'auto';
+          dd.style.right = '0';
+        } else if (rect.left < dropdownWidth - padding) {
+          dd.style.right = 'auto';
+          dd.style.left = '0';
+        } else {
+          dd.style.left = 'auto';
+          dd.style.right = '0';
+        }
+
+        dd.style.visibility = 'visible';
+        dd.style.display = 'block';
+      });
     });
+
     document.addEventListener('click', (e) => {
       if (!dd.contains(e.target) && !btn.contains(e.target)) {
         dd.style.display = 'none';
@@ -341,4 +374,5 @@
   waitBodyAndObserve();
 
   window.addEventListener('yt-navigate-finish', () => setTimeout(observeEnd, 1000));
+  window.addEventListener('#header-bar > header', () => setTimeout(observeEnd, 1000));
 })();
