@@ -3,7 +3,7 @@
 // @namespace    https://github.com/onetwohour/Block-YouTube-Shorts
 // @updateURL    https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
 // @downloadURL  https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
-// @version      1.0.2
+// @version      1.0.3
 // @description  Protect from brain breaker
 // @match        *://*.youtube.com/*
 // @grant        GM_getValue
@@ -83,6 +83,7 @@
         'ytm-shorts-lockup-view-model-v2',
         !PATTERN.subs.test(location.href) ? 'ytd-rich-section-renderer.style-scope.ytd-rich-grid-renderer:has(ytd-rich-shelf-renderer[is-shorts])' : null,
         '[is-shorts]',
+        '#contents > grid-shelf-view-model:has(ytm-shorts-lockup-view-model-v2)',
         // Mobile
         'ytm-rich-section-renderer:has(ytm-shorts-lockup-view-model)',
         'ytm-item-section-renderer:has(ytm-shorts-lockup-view-model)'
