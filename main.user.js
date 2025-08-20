@@ -3,7 +3,7 @@
 // @namespace    https://github.com/onetwohour/Block-YouTube-Shorts
 // @updateURL    https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
 // @downloadURL  https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
-// @version      1.0.3
+// @version      1.0.4
 // @description  Protect from brain breaker
 // @match        *://*.youtube.com/*
 // @grant        GM_getValue
@@ -200,17 +200,28 @@
       alignItems: 'center',
       height: '36px',
       padding: '0 12px',
-      gap: '8px'
+      gap: '8px',
+      lineHeight: '1'
     });
     btn.setAttribute('aria-label', 'Shorts Setting');
 
     const iconWrap = document.createElement('span');
     iconWrap.className = 'yt-spec-icon-shape';
+    Object.assign(iconWrap.style, {
+      display: 'flex',
+      alignItems: 'center',
+      height: '20px'
+    });
+
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('width', '20');
     svg.setAttribute('height', '20');
     svg.setAttribute('viewBox', '0 0 24 24');
     svg.setAttribute('fill', 'currentColor');
+    Object.assign(svg.style, {
+      display: 'block'
+    });
+
     const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     p.setAttribute('d', 'M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-2h2Zm0-4h-2V7h2Z');
     svg.appendChild(p);
@@ -219,10 +230,19 @@
     const txt = document.createElement('span');
     txt.textContent = 'Shorts';
     txt.className = 'yt-core-attributed-string yt-core-attributed-string--white-space-no-wrap';
-    txt.style.fontSize = '13px';
+    Object.assign(txt.style, {
+      fontSize: '13px',
+      display: 'flex',
+      alignItems: 'center',
+      lineHeight: '1',
+      height: '20px'
+    });
 
     btn.appendChild(iconWrap);
     btn.appendChild(txt);
+
+    wrap.appendChild(btn);
+    end.prepend(wrap);
 
     const dd = document.createElement('div');
     dd.id = 'prn-dropdown';
