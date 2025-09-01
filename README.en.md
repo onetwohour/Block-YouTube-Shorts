@@ -28,7 +28,7 @@ Block short, addictive content to protect your attention span and time.
 
 2. Add the script from the link below:
 
-   * [Block YouTube Shorts Script](https://raw.githubusercontent.com/onetwohour/Block-YouTube-Shorts/main/main.user.js)
+   * [Block YouTube Shorts Script](https://update.greasyfork.org/scripts/547991/Block%20Youtube%20Shorts.user.js)
 
 3. Visit YouTube, then click the new **Shorts** button next to your profile icon (top right) to customize your settings.
 
