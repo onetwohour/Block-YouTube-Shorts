@@ -1,15 +1,28 @@
 // ==UserScript==
 // @name         Block Youtube Shorts
+// @name:ko      유튜브 쇼츠 차단
 // @namespace    https://github.com/onetwohour/Block-YouTube-Shorts
-// @updateURL    https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
-// @downloadURL  https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/main.user.js
-// @version      1.0.4
-// @description  Protect from brain breaker
+// @version      1.1
+// @description         Protect from brain breaker
+// @description:ko      유튜브 Shorts를 차단하여 집중력을 지켜줍니다
+// @description:en      Block YouTube Shorts to stay focused
+// @description:ja      YouTube Shortsを非表示にして集中力を守ります
+// @description:zh      屏蔽YouTube Shorts，保持专注
+// @description:es      Bloquea YouTube Shorts para mantener la concentración
+// @description:fr      Bloquez YouTube Shorts pour rester concentré
+// @description:de      Blenden Sie YouTube Shorts aus, um fokussiert zu bleiben
+// @description:pt      Bloqueie o YouTube Shorts para manter o foco
+// @description:ru      Блокируйте YouTube Shorts, чтобы сохранять концентрацию
+// @description:ar      احظر YouTube Shorts للحفاظ على تركيزك
 // @match        *://*.youtube.com/*
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_getResourceText
 // @run-at       document-start
-// @require      https://github.com/onetwohour/Block-YouTube-Shorts/raw/refs/heads/main/lang.js
+// @resource     lang https://cdn.jsdelivr.net/gh/onetwohour/Block-YouTube-Shorts/lang.json
+// @license      MIT
+// @downloadURL https://update.greasyfork.org/scripts/547991/Block%20Youtube%20Shorts.user.js
+// @updateURL https://update.greasyfork.org/scripts/547991/Block%20Youtube%20Shorts.meta.js
 // ==/UserScript==
 
 (() => {
@@ -27,14 +40,22 @@
     scrollLock: true,
     sidebar: true
   };
+  
+  let LANGS;
+  try {
+    LANGS = JSON.parse(GM_getResourceText('lang'));
+  } catch (e) {
+    LANGS = { en: { title: 'Shorts', home:'', subs:'', feeds:'', recommend:'', channel:'', search:'', redirect:'', scrollLock:'', sidebar:'' } };
+  }
 
   function detectLang() {
     const saved = GM_getValue('userLang');
-    if (saved && window.LANGS[saved]) return saved;
+    if (saved && LANGS[saved]) return saved;
     const nav = (navigator.language || 'en').slice(0, 2).toLowerCase();
-    return window.LANGS[nav] ? nav : 'en';
+    return LANGS[nav] ? nav : 'en';
   }
-  const UI_LABEL = window.LANGS[detectLang()];
+
+  const UI_LABEL = LANGS[detectLang()];
 
   const config = {};
   for (const key in INIT_CONFIG) config[key] = GM_getValue(PREFIX + key, INIT_CONFIG[key]);
