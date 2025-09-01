@@ -27,7 +27,7 @@
 
 2. 아래 링크로 이동해 스크립트를 추가합니다.
 
-   * [Block Youtube Shorts 스크립트](https://raw.githubusercontent.com/onetwohour/Block-YouTube-Shorts/main/main.user.js)
+   * [Block Youtube Shorts 스크립트](https://update.greasyfork.org/scripts/547991/Block%20Youtube%20Shorts.user.js)
 
 3. 유튜브(YouTube)에 접속하여, 우측 상단(로그인 영역 옆)에 새로 생긴 **Shorts** 버튼을 클릭해
    차단/리디렉션/숨김 옵션을 원하는 대로 설정합니다.
