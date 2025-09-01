@@ -21,8 +21,8 @@
 // @run-at       document-start
 // @resource     lang https://cdn.jsdelivr.net/gh/onetwohour/Block-YouTube-Shorts/lang.json
 // @license      MIT
-// @downloadURL https://update.greasyfork.org/scripts/547991/Block%20Youtube%20Shorts.user.js
-// @updateURL https://update.greasyfork.org/scripts/547991/Block%20Youtube%20Shorts.meta.js
+// @downloadURL  https://update.greasyfork.org/scripts/547991/Block%20Youtube%20Shorts.user.js
+// @updateURL    https://update.greasyfork.org/scripts/547991/Block%20Youtube%20Shorts.meta.js
 // ==/UserScript==
 
 (() => {
