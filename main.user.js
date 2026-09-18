@@ -2,7 +2,7 @@
 // @name         Block Youtube Shorts
 // @name:ko      유튜브 쇼츠 차단
 // @namespace    https://github.com/onetwohour/Block-YouTube-Shorts
-// @version      1.3
+// @version      1.4
 // @description         Protect from brain breaker
 // @description:ko      유튜브 Shorts를 차단하여 집중력을 지켜줍니다
 // @description:en      Block YouTube Shorts to stay focused
@@ -17,9 +17,7 @@
 // @match        *://*.youtube.com/*
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @grant        GM_getResourceText
 // @run-at       document-start
-// @resource     lang https://cdn.jsdelivr.net/gh/onetwohour/Block-YouTube-Shorts/lang.json
 // @license      MIT
 // @downloadURL  https://update.greasyfork.org/scripts/547991/Block%20Youtube%20Shorts.user.js
 // @updateURL    https://update.greasyfork.org/scripts/547991/Block%20Youtube%20Shorts.meta.js
@@ -41,28 +39,157 @@
         sidebar: true
     };
 
-    let LANGS;
-    try {
-        LANGS = JSON.parse(GM_getResourceText('lang'));
-    } catch (e) {
-        LANGS = {
-            en: {
-                title: 'Shorts',
-                home: '',
-                subs: '',
-                feeds: '',
-                recommend: '',
-                channel: '',
-                search: '',
-                redirect: '',
-                scrollLock: '',
-                sidebar: ''
-            }
-        };
+    const LANGS = {
+        "ko": {
+            "title": "🧹 Shorts 차단",
+            "home": "홈 화면 Shorts 숨김",
+            "subs": "구독 피드 Shorts 숨김",
+            "feeds": "기타 피드 Shorts 숨김",
+            "recommend": "영상 화면 우측 추천 Shorts 숨김",
+            "channel": "채널 페이지 Shorts 숨김",
+            "search": "검색 결과 Shorts 숨김",
+            "redirect": "Shorts를 일반 동영상 화면으로 리디렉션",
+            "scrollLock": "Shorts 페이지 스크롤 잠금",
+            "sidebar": "사이드바 Shorts 메뉴 숨김"
+        },
+        "en": {
+            "title": "🧹 Shorts Block",
+            "home": "Hide Shorts on Home",
+            "subs": "Hide Shorts in Subscriptions",
+            "feeds": "Hide Shorts in Other Feeds",
+            "recommend": "Hide Shorts in Recommendations",
+            "channel": "Hide Shorts on Channel Page",
+            "search": "Hide Shorts in Search",
+            "redirect": "Redirect Shorts to Normal Videos",
+            "scrollLock": "Lock Scroll on Shorts Page",
+            "sidebar": "Hide Shorts in Sidebar"
+        },
+        "ja": {
+            "title": "🧹 Shorts 非表示",
+            "home": "ホーム画面のShortsを非表示",
+            "subs": "登録フィードのShortsを非表示",
+            "feeds": "その他のフィードのShortsを非表示",
+            "recommend": "動画画面右側のShortsを非表示",
+            "channel": "チャンネルページのShortsを非表示",
+            "search": "検索結果のShortsを非表示",
+            "redirect": "Shortsを通常動画へリダイレクト",
+            "scrollLock": "Shortsページのスクロールをロック",
+            "sidebar": "サイドバーのShortsメニューを非表示"
+        },
+        "zh": {
+            "title": "🧹 Shorts 屏蔽",
+            "home": "隐藏首页 Shorts",
+            "subs": "在订阅中隐藏 Shorts",
+            "feeds": "在其他订阅源隐藏 Shorts",
+            "recommend": "隐藏视频右侧推荐 Shorts",
+            "channel": "在频道页面隐藏 Shorts",
+            "search": "在搜索结果中隐藏 Shorts",
+            "redirect": "将 Shorts 重定向到普通视频",
+            "scrollLock": "锁定 Shorts 页面滚动",
+            "sidebar": "隐藏侧边栏 Shorts 菜单"
+        },
+        "es": {
+            "title": "🧹 Bloquear Shorts",
+            "home": "Ocultar Shorts en Inicio",
+            "subs": "Ocultar Shorts en Suscripciones",
+            "feeds": "Ocultar Shorts en Otros Feeds",
+            "recommend": "Ocultar Shorts en Recomendaciones",
+            "channel": "Ocultar Shorts en la Página del Canal",
+            "search": "Ocultar Shorts en Búsqueda",
+            "redirect": "Redirigir Shorts a Videos Normales",
+            "scrollLock": "Bloquear Desplazamiento en la Página de Shorts",
+            "sidebar": "Ocultar Shorts en la Barra Lateral"
+        },
+        "fr": {
+            "title": "🧹 Blocage Shorts",
+            "home": "Masquer les Shorts sur la page d’accueil",
+            "subs": "Masquer les Shorts dans Abonnements",
+            "feeds": "Masquer les Shorts dans les autres flux",
+            "recommend": "Masquer les Shorts dans les recommandations",
+            "channel": "Masquer les Shorts sur la page de chaîne",
+            "search": "Masquer les Shorts dans les résultats de recherche",
+            "redirect": "Rediriger les Shorts vers les vidéos classiques",
+            "scrollLock": "Bloquer le défilement sur la page Shorts",
+            "sidebar": "Masquer le menu Shorts dans la barre latérale"
+        },
+        "de": {
+            "title": "🧹 Shorts Blocken",
+            "home": "Shorts auf der Startseite ausblenden",
+            "subs": "Shorts im Abofeed ausblenden",
+            "feeds": "Shorts in anderen Feeds ausblenden",
+            "recommend": "Shorts in Empfehlungen ausblenden",
+            "channel": "Shorts auf der Kanalseite ausblenden",
+            "search": "Shorts in der Suche ausblenden",
+            "redirect": "Shorts zu normalen Videos umleiten",
+            "scrollLock": "Scrollen auf der Shorts-Seite sperren",
+            "sidebar": "Shorts-Menü in der Seitenleiste ausblenden"
+        },
+        "pt": {
+            "title": "🧹 Bloquear Shorts",
+            "home": "Ocultar Shorts na Página Inicial",
+            "subs": "Ocultar Shorts em Inscrições",
+            "feeds": "Ocultar Shorts em Outros Feeds",
+            "recommend": "Ocultar Shorts em Recomendações",
+            "channel": "Ocultar Shorts na Página do Canal",
+            "search": "Ocultar Shorts na Pesquisa",
+            "redirect": "Redirecionar Shorts para Vídeos Normais",
+            "scrollLock": "Bloquear Rolagem na Página de Shorts",
+            "sidebar": "Ocultar Shorts na Barra Lateral"
+        },
+        "ru": {
+            "title": "🧹 Блокировка Shorts",
+            "home": "Скрыть Shorts на главной странице",
+            "subs": "Скрыть Shorts в подписках",
+            "feeds": "Скрыть Shorts в других лентах",
+            "recommend": "Скрыть Shorts в рекомендациях",
+            "channel": "Скрыть Shorts на странице канала",
+            "search": "Скрыть Shorts в поиске",
+            "redirect": "Перенаправлять Shorts на обычные видео",
+            "scrollLock": "Заблокировать прокрутку на странице Shorts",
+            "sidebar": "Скрыть Shorts в боковой панели"
+        },
+        "ar": {
+            "title": "🧹 حظر Shorts",
+            "home": "إخفاء Shorts في الصفحة الرئيسية",
+            "subs": "إخفاء Shorts في الاشتراكات",
+            "feeds": "إخفاء Shorts في الخلاصات الأخرى",
+            "recommend": "إخفاء Shorts في التوصيات",
+            "channel": "إخفاء Shorts في صفحة القناة",
+            "search": "إخفاء Shorts في نتائج البحث",
+            "redirect": "إعادة توجيه Shorts إلى مقاطع الفيديو العادية",
+            "scrollLock": "قفل التمرير في صفحة Shorts",
+            "sidebar": "إخفاء قائمة Shorts في الشريط الجانبي"
+        }
+    };
+
+    function readStored(key, fallback) {
+        try {
+            const value = GM_getValue(key, fallback);
+            return value === undefined || value === null ? fallback : value;
+        } catch (e) {
+            return fallback;
+        }
+    }
+
+    function readFlag(key) {
+        const value = readStored(PREFIX + key, INIT_CONFIG[key]);
+        if (typeof value === 'boolean') return value;
+        if (typeof value === 'number') return value !== 0;
+        if (value === 'true') return true;
+        if (value === 'false') return false;
+        return INIT_CONFIG[key];
+    }
+
+    function writeFlag(key, value) {
+        try {
+            GM_setValue(PREFIX + key, value);
+        } catch (e) {
+            console.warn('[Block Youtube Shorts] could not save settings; this change applies to the current session only.', e);
+        }
     }
 
     function detectLang() {
-        const saved = GM_getValue('userLang');
+        const saved = readStored('userLang', null);
         if (saved && LANGS[saved]) return saved;
         const nav = (navigator.language || 'en').slice(0, 2).toLowerCase();
         return LANGS[nav] ? nav : 'en';
@@ -71,7 +198,7 @@
     const UI_LABEL = LANGS[detectLang()];
 
     const config = {};
-    for (const key in INIT_CONFIG) config[key] = GM_getValue(PREFIX + key, INIT_CONFIG[key]);
+    for (const key in INIT_CONFIG) config[key] = readFlag(key);
 
     const HOST = /^(?:www\.|m\.)?youtube\.com$/;
 
@@ -108,37 +235,85 @@
         return !!config[scope];
     }
 
-    const LOCKUP = 'ytm-shorts-lockup-view-model, ytm-shorts-lockup-view-model-v2';
+    const LOCKUP_TAGS = ['ytm-shorts-lockup-view-model', 'ytm-shorts-lockup-view-model-v2'];
+    const LOCKUP = LOCKUP_TAGS.join(', ');
 
-    const SHORTS_SELECTORS = [
-        `ytd-rich-item-renderer:has(${LOCKUP})`,
-        LOCKUP,
-        'ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts])',
-        'ytd-rich-shelf-renderer[is-shorts]',
-        'ytd-reel-shelf-renderer',
-        'ytd-shorts-shelf-renderer',
-        `grid-shelf-view-model:has(${LOCKUP})`,
-        'ytm-rich-section-renderer:has(ytm-shorts-lockup-view-model)'
-    ];
+    const MARK_ATTR = 'data-prn-hide';
 
-    const SIDEBAR_SELECTORS = [
-        'ytd-guide-entry-renderer:has(> a[href^="/shorts"])',
-        'ytd-guide-entry-renderer:has(> a[title="Shorts"])',
-        'ytd-mini-guide-entry-renderer:has(> a[href^="/shorts"])',
-        'ytd-mini-guide-entry-renderer:has(> a[title="Shorts"])',
-        'ytm-pivot-bar-item-renderer:has(> .pivot-bar-item-tab.pivot-shorts)'
-    ];
+    const HIDE_GROUPS = {
+        shorts: {
+            selectors: [
+                ...LOCKUP_TAGS,
+                'ytd-rich-shelf-renderer[is-shorts]',
+                'ytd-reel-shelf-renderer',
+                'ytm-reel-shelf-renderer',
+                'ytd-shorts-shelf-renderer'
+            ],
+            containers: [
+                { container: 'ytd-rich-item-renderer', contains: LOCKUP },
+                { container: 'grid-shelf-view-model', contains: LOCKUP },
+                { container: 'ytm-rich-section-renderer', contains: 'ytm-shorts-lockup-view-model' },
+                { container: 'ytd-rich-section-renderer', contains: 'ytd-rich-shelf-renderer[is-shorts]' }
+            ]
+        },
+        sidebar: {
+            selectors: [],
+            containers: [
+                { container: 'ytd-guide-entry-renderer', contains: 'a[href^="/shorts"], a[title="Shorts"]' },
+                { container: 'ytd-mini-guide-entry-renderer', contains: 'a[href^="/shorts"], a[title="Shorts"]' },
+                { container: 'ytm-pivot-bar-item-renderer', contains: '.pivot-bar-item-tab.pivot-shorts, .pivot-bar-item-tab.shorts' }
+            ]
+        }
+    };
 
-    const NAV_BUTTONS = 'ytd-shorts #navigation-button-up,\nytd-shorts #navigation-button-down';
+    const NAV_BUTTONS = ['ytd-shorts #navigation-button-up', 'ytd-shorts #navigation-button-down'];
+
+    const HAS_SUPPORT = (() => {
+        try {
+            return typeof CSS !== 'undefined' && CSS.supports('selector(:has(*))');
+        } catch (e) {
+            return false;
+        }
+    })();
+
+    function hideRule(selector) {
+        return `${selector} { display: none !important; }`;
+    }
+
+    function pushHideRules(rules, kind) {
+        const group = HIDE_GROUPS[kind];
+        for (const selector of group.selectors) rules.push(hideRule(selector));
+        if (!HAS_SUPPORT) {
+            rules.push(hideRule(`[${MARK_ATTR}="${kind}"]`));
+            return;
+        }
+        for (const rule of group.containers) rules.push(hideRule(`${rule.container}:has(${rule.contains})`));
+    }
+
+    function markContainers() {
+        if (HAS_SUPPORT) return;
+        const stale = new Set(document.querySelectorAll(`[${MARK_ATTR}]`));
+        for (const kind in HIDE_GROUPS) {
+            for (const rule of HIDE_GROUPS[kind].containers) {
+                document.querySelectorAll(rule.contains).forEach(element => {
+                    const box = element.closest(rule.container);
+                    if (!box) return;
+                    stale.delete(box);
+                    if (box.getAttribute(MARK_ATTR) !== kind) box.setAttribute(MARK_ATTR, kind);
+                });
+            }
+        }
+        stale.forEach(box => box.removeAttribute(MARK_ATTR));
+    }
 
     function updateStyleSheet() {
         if (!document.head) return;
 
         const rules = [];
-        if (config.sidebar) rules.push(`${SIDEBAR_SELECTORS.join(',\n')} { display: none !important; }`);
-        if (shouldHideCSS()) rules.push(`${SHORTS_SELECTORS.join(',\n')} { display: none !important; }`);
+        if (config.sidebar) pushHideRules(rules, 'sidebar');
+        if (shouldHideCSS()) pushHideRules(rules, 'shorts');
         if (isShortsPage() && !config.redirect && config.scrollLock) {
-            rules.push(`${NAV_BUTTONS} { display: none !important; }`);
+            for (const selector of NAV_BUTTONS) rules.push(hideRule(selector));
         }
 
         const id = 'prn-css';
@@ -152,20 +327,15 @@
         if (sheet.textContent !== text) sheet.textContent = text;
     }
 
-    function replaceShortsLinks(root = document) {
-        if (!config.redirect) return;
-        root.querySelectorAll('a[href*="/shorts/"]:not([href$="/shorts/"]):not([data-prn-shorts-patched])').forEach(a => {
-            const m = a.href.match(/\/shorts\/([^/?&#]+)/);
-            if (!m) return;
-            const watchUrl = '/watch?v=' + m[1];
-            a.href = watchUrl;
-            a.addEventListener('click', e => {
-                e.preventDefault();
-                location.assign(watchUrl);
-            });
-            a.dataset.prnShortsPatched = '1';
-        });
-    }
+    document.addEventListener('click', e => {
+        if (!config.redirect || !e.target.closest) return;
+        const link = e.target.closest('a[href*="/shorts/"]');
+        const m = link && link.href.match(/\/shorts\/([^/?&#]+)/);
+        if (!m) return;
+        e.preventDefault();
+        e.stopPropagation();
+        location.assign('/watch?v=' + m[1]);
+    }, true);
 
     const NAV_KEYS = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End']);
     let keyBlocker = null;
@@ -245,14 +415,12 @@
         }
 
         updateStyleSheet();
-        replaceShortsLinks();
+        markContainers();
     }
 
     if (document.readyState === 'loading') {
         window.addEventListener('DOMContentLoaded', handlePage);
     } else handlePage();
-    window.addEventListener('yt-navigate-finish', handlePage);
-    window.addEventListener('yt-page-data-fetched', handlePage);
 
     const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -331,6 +499,7 @@
   display: flex;
   align-items: center;
   margin-right: 8px;
+  pointer-events: auto;
 }
 html[dark] #prn-btn-wrapper {
   --prn-bg: #282828;
@@ -356,6 +525,7 @@ html[dark] #prn-btn-wrapper {
   color: var(--prn-text);
   cursor: pointer;
 }
+#prn-btn-wrapper.prn-topbar #prn-btn { color: inherit; }
 #prn-btn:hover,
 #prn-btn[aria-expanded="true"] { background: var(--prn-hover); }
 #prn-btn:focus-visible { outline: 2px solid var(--prn-text); outline-offset: -2px; }
@@ -435,6 +605,10 @@ html[dark] #prn-btn-wrapper {
         document.head.appendChild(st);
     }
 
+    function isRepeatClick(e) {
+        return e.detail > 1;
+    }
+
     function closePanel() {
         const dd = document.getElementById('prn-dropdown');
         const btn = document.getElementById('prn-btn');
@@ -445,12 +619,25 @@ html[dark] #prn-btn-wrapper {
     function openPanel(dd, btn) {
         dd.style.display = 'block';
         btn.setAttribute('aria-expanded', 'true');
-        dd.style.right = '0';
-        dd.style.left = 'auto';
-        if (dd.getBoundingClientRect().left < 8) {
-            dd.style.right = 'auto';
-            dd.style.left = '0';
+
+        const gap = 8;
+        const viewport = document.documentElement.clientWidth;
+        const anchor = dd.parentElement.getBoundingClientRect();
+
+        dd.style.width = 'max-content';
+        dd.style.maxWidth = '';
+        dd.style.right = 'auto';
+
+        const cap = viewport - gap * 2;
+        let width = dd.getBoundingClientRect().width;
+        if (width > cap) {
+            dd.style.maxWidth = cap + 'px';
+            width = dd.getBoundingClientRect().width;
         }
+
+        const rightAligned = anchor.right - width;
+        const left = Math.min(Math.max(rightAligned, gap), Math.max(gap, viewport - gap - width));
+        dd.style.left = (left - anchor.left) + 'px';
     }
 
     function mastheadSlot() {
@@ -468,6 +655,7 @@ html[dark] #prn-btn-wrapper {
 
         const wrap = document.createElement('div');
         wrap.id = 'prn-btn-wrapper';
+        if (slot.closest('#header-bar')) wrap.classList.add('prn-topbar');
 
         const btn = document.createElement('button');
         btn.id = 'prn-btn';
@@ -505,12 +693,15 @@ html[dark] #prn-btn-wrapper {
 
             const toggle = () => {
                 config[key] = !config[key];
-                GM_setValue(PREFIX + key, config[key]);
                 row.setAttribute('aria-checked', String(config[key]));
+                writeFlag(key, config[key]);
                 handlePage();
             };
 
-            row.addEventListener('click', toggle);
+            row.addEventListener('click', e => {
+                if (isRepeatClick(e)) return;
+                toggle();
+            });
             row.addEventListener('keydown', e => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -523,6 +714,7 @@ html[dark] #prn-btn-wrapper {
 
         btn.addEventListener('click', e => {
             e.stopPropagation();
+            if (isRepeatClick(e)) return;
             if (dd.style.display === 'block') closePanel();
             else openPanel(dd, btn);
         });
@@ -535,7 +727,7 @@ html[dark] #prn-btn-wrapper {
     document.addEventListener('click', e => {
         const wrap = document.getElementById('prn-btn-wrapper');
         if (wrap && !wrap.contains(e.target)) closePanel();
-    });
+    }, true);
 
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') closePanel();
@@ -567,45 +759,51 @@ html[dark] #prn-btn-wrapper {
 
     let scanScheduled = false;
 
-    function scheduleLinkScan() {
-        if (scanScheduled || !config.redirect) return;
+    function scheduleScan() {
+        if (scanScheduled) return;
         scanScheduled = true;
         requestAnimationFrame(() => {
             scanScheduled = false;
-            replaceShortsLinks();
+            markContainers();
         });
     }
 
-    const shortsObserver = new MutationObserver(mutations => {
-        if (!config.redirect) return;
-        for (const m of mutations) {
-            if (m.addedNodes.length) {
-                scheduleLinkScan();
-                return;
-            }
-        }
-    });
-
-    function waitBodyAndObserve() {
-        if (document.body) {
-            shortsObserver.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-        } else {
-            const bodyIv = setInterval(() => {
-                if (document.body) {
-                    shortsObserver.observe(document.body, {
-                        childList: true,
-                        subtree: true
-                    });
-                    clearInterval(bodyIv);
+    function observeBody() {
+        const observer = new MutationObserver(mutations => {
+            for (const m of mutations) {
+                if (m.addedNodes.length) {
+                    scheduleScan();
+                    return;
                 }
-            }, 1000);
+            }
+        });
+        const start = () => observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        if (document.body) {
+            start();
+            return;
         }
+        const poll = setInterval(() => {
+            if (!document.body) return;
+            start();
+            clearInterval(poll);
+        }, 1000);
     }
 
-    waitBodyAndObserve();
+    if (!HAS_SUPPORT) observeBody();
 
-    window.addEventListener('yt-navigate-finish', () => setTimeout(observeEnd, 1000));
+    const NAV_HINTS = ['yt-navigate-finish', 'yt-page-data-fetched', 'state-navigateend', 'popstate'];
+    let lastUrl = location.href;
+
+    function onNavigate() {
+        handlePage();
+        if (location.href === lastUrl) return;
+        lastUrl = location.href;
+        closePanel();
+        setTimeout(observeEnd, 1000);
+    }
+
+    for (const type of NAV_HINTS) window.addEventListener(type, onNavigate);
 })();
